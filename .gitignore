@@ -1,3 +1,11 @@
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
+*play.jl
+assets/font1.css
+assets/font2.css
+assets/font3.css
+assets/remark.min.js
+assets/katex.min.js
+assets/katex.min.css
+assets/auto-render.min.js
