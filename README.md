@@ -16,7 +16,7 @@ Check [Remark documentation](https://github.com/gnab/remark/wiki/Markdown) on ho
 ```julia
 import Remark
 
-# Create folder with presentation (html+markdown) from the markdown file "index.md"
+# Add presentation (html+markdown) from the markdown file "index.md" in the folder "presentation/mybeautifulslides"
 slideshowdir = Remark.slideshow("index.md", "presentation/mybeautifulslides")
 
 # Open presentation in default browser

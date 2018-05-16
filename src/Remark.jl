@@ -1,7 +1,5 @@
 module Remark
 
-import Literate: filename
-
 const _pkg_assets = joinpath(dirname(@__DIR__), "assets")
 
 const deps = [
@@ -18,8 +16,7 @@ const depfiles = joinpath.(_pkg_assets, ["font1.css", "font2.css", "font3.css", 
 
 const depkeys = ["\$font1", "\$font2", "\$font3", "\$remark", "\$katexjs", "\$auto-render", "\$katexcss"]
 
-function slideshow(inputfile, outputdir =""; name = filename(inputfile), js = :local)
-    slideshowdir = joinpath(outputdir, name)
+function slideshow(inputfile, slideshowdir; js = :local)
     mkpath(slideshowdir)
     _create_index_html(slideshowdir; js = js)
     cp(inputfile, joinpath(slideshowdir, "markdown.md"), remove_destination=true)
