@@ -10,7 +10,7 @@ deps = [
     "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML&delayStartupUntil=configured"
 ]
 
-depnames = joinpath.(_pkg_assets, ["font1.css", "font2.css", "font3.css", "remark.min.js", "mathjax.js"])
+depnames = joinpath.(_pkg_assets, ["font1.css", "font2.css", "font3.css", "remark.min.js", "mathjax.min.js"])
 
 for (dep, depname) in zip(deps, depnames)
     download(dep, depname)
