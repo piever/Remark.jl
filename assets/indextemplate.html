@@ -20,19 +20,26 @@
   <body>
 
     <script src="$remark" type="text/javascript"></script>
-    <script src="$mathjax" type="text/javascript"></script>
-    <script>
-    var slideshow = remark.create({
-      sourceUrl: 'markdown.md'
-    });
-    // Setup MathJax
-    MathJax.Hub.Config({
-        tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    <script src="$katexjs"></script>
+    <script src="$auto-render"></script>
+    <link rel="stylesheet" href="$katexcss">
+    <script type="text/javascript">
+        var options = {};
+        var renderMath = function() {
+        renderMathInElement(document.body);
+        // or if you want to use $...$ for math,
+        // renderMathInElement(document.body, {delimiters: [ // mind the order of delimiters(!?)
+        //     {left: "$$", right: "$$", display: true},
+        //     {left: "$", right: "$", display: false},
+        //     {left: "\\[", right: "\\]", display: true},
+        //     {left: "\\(", right: "\\)", display: false},
+        // ]});
         }
-    });
 
-    MathJax.Hub.Configured();
-    </script>
+        var slideshow = remark.create({
+          sourceUrl: 'markdown.md'
+        }, renderMath);
+
+        </script>
   </body>
 </html>
