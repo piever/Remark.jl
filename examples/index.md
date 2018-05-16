@@ -6,6 +6,10 @@ Some Julia code
 1+2
 ```
 
+--
+
+A fragment
+
 ---
 
 # Some equations

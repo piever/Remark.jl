@@ -18,7 +18,7 @@ const depfiles = joinpath.(_pkg_assets, ["font1.css", "font2.css", "font3.css", 
 
 const depkeys = ["\$font1", "\$font2", "\$font3", "\$remark", "\$katexjs", "\$auto-render", "\$katexcss"]
 
-function slideshow(inputfile, outputdir =""; name = filename(inputfile), js = :remote)
+function slideshow(inputfile, outputdir =""; name = filename(inputfile), js = :local)
     slideshowdir = joinpath(outputdir, name)
     mkpath(slideshowdir)
     _create_index_html(slideshowdir; js = js)
@@ -26,7 +26,7 @@ function slideshow(inputfile, outputdir =""; name = filename(inputfile), js = :r
     return slideshowdir
 end
 
-function _create_index_html(slideshowdir; js = :remote)
+function _create_index_html(slideshowdir; js = :local)
 
     d = (js == :local) ? depfiles : deps
 
