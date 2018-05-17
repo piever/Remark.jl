@@ -3,6 +3,8 @@ module Remark
 import Literate
 import Documenter
 
+export slideshow
+
 const _pkg_assets = joinpath(dirname(@__DIR__), "assets")
 
 const deps = [
@@ -34,11 +36,15 @@ function _create_index_md(inputfile, outputdir; documenter = true)
     else
         cp(inputfile, joinpath(outputdir, "src", "index.md"), remove_destination=true)
     end
+    srand(123)
+    s = randstring(50)
+    _replace_line(joinpath(outputdir, "src", "index.md"), r"^(\s)*(--)(\s)*$", s)
     if documenter
         Documenter.makedocs(root = outputdir)
     else
         cp(joinpath(outputdir, "src", "index.md"), joinpath(outputdir, "build", "index.md"), remove_destination=true)
     end
+    _replace_line(joinpath(outputdir, "build", "index.md"), Regex("^($s)\$"), "--")
 end
 
 
@@ -71,5 +77,18 @@ end
 function open(outputdir)
     openurl(joinpath(outputdir, "build", "index.html"))
 end
+
+function _replace_line(filename, a::Regex, b)
+    f = Base.open(filename)
+    (tmp, tmpstream) = mktemp()
+    for line in eachline(f, chomp = false)
+        write(tmpstream, ismatch(a, line) ? b : line)
+        write(tmpstream, '\n')
+    end
+    close(f)
+    close(tmpstream)
+    mv(tmp, filename, remove_destination = true)
+end
+
 
 end # module

@@ -26,3 +26,11 @@ Remark.open(slideshowdir)
 ## Offline use
 
 The `slideshow` command creates a slideshow that uses local javascript libraries: the resulting presentation folder can be opened offline. To instead use the online javascript libraries use the option `js=:remote` to the `slideshow` function.
+
+## Using from a Julia script
+
+Using the [Literate](https://github.com/fredrikekre/Literate.jl) package it is possible to create a presentation from a Julia script. As explained in the Literate documentation, add a comment to slides corresponding to markdown. A slide separator is now `# ---` for example.
+
+## Documenter
+
+By default Documenter is run on the provided markdown. To keep the markdown as is, use `documenter=false`.
