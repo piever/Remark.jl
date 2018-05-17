@@ -19,7 +19,7 @@ const depkeys = ["\$font1", "\$font2", "\$font3", "\$remark", "\$katexjs", "\$au
 function slideshow(inputfile, slideshowdir; js = :local)
     mkpath(slideshowdir)
     _create_index_html(slideshowdir; js = js)
-    cp(inputfile, joinpath(slideshowdir, "markdown.md"), remove_destination=true)
+    cp(inputfile, joinpath(slideshowdir, "index.md"), remove_destination=true)
     return slideshowdir
 end
 
