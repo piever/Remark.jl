@@ -45,6 +45,7 @@ function _create_index_md(inputfile, outputdir; documenter = true)
         cp(joinpath(outputdir, "src", "index.md"), joinpath(outputdir, "build", "index.md"), remove_destination=true)
     end
     _replace_line(joinpath(outputdir, "build", "index.md"), Regex("^($s)\$"), "--")
+    _replace_line(joinpath(outputdir, "build", "index.md"), r"^<a id=.*$", "")
 end
 
 
@@ -81,7 +82,7 @@ end
 function _replace_line(filename, a::Regex, b)
     f = Base.open(filename)
     (tmp, tmpstream) = mktemp()
-    for line in eachline(f, chomp = false)
+    for line in eachline(f, chomp = true)
         write(tmpstream, ismatch(a, line) ? b : line)
         write(tmpstream, '\n')
     end

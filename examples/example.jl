@@ -8,5 +8,11 @@
 # A fragment
 #
 # ---
+#
+# # Here's a way to add plots
 
-1 + 1
+using Plots; pyplot()
+plot(rand(10))
+savefig("statplot.png");
+
+# ![](statplot.png)
