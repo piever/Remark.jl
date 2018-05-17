@@ -1,5 +1,10 @@
 module Remark
 
+import Literate
+import Documenter
+
+export slideshow
+
 const _pkg_assets = joinpath(dirname(@__DIR__), "assets")
 
 const deps = [
@@ -16,18 +21,39 @@ const depfiles = joinpath.(_pkg_assets, ["font1.css", "font2.css", "font3.css", 
 
 const depkeys = ["\$font1", "\$font2", "\$font3", "\$remark", "\$katexjs", "\$auto-render", "\$katexcss"]
 
-function slideshow(inputfile, slideshowdir; js = :local)
-    mkpath(slideshowdir)
-    _create_index_html(slideshowdir; js = js)
-    cp(inputfile, joinpath(slideshowdir, "markdown.md"), remove_destination=true)
-    return slideshowdir
+function slideshow(inputfile, outputdir; js = :local, documenter = true)
+    inputfile = realpath(abspath(inputfile))
+    outputdir = realpath(abspath(outputdir))
+    mkpath.(joinpath.(outputdir, ("src", "build")))
+    _create_index_md(inputfile, outputdir; documenter = documenter)
+    _create_index_html(outputdir; js = js)
+    return outputdir
 end
 
-function _create_index_html(slideshowdir; js = :local)
+function _create_index_md(inputfile, outputdir; documenter = true)
+    if ismatch(r".jl$", inputfile)
+        Literate.markdown(inputfile, joinpath(outputdir, "src"), name = "index")
+    else
+        cp(inputfile, joinpath(outputdir, "src", "index.md"), remove_destination=true)
+    end
+    srand(123)
+    s = randstring(50)
+    _replace_line(joinpath(outputdir, "src", "index.md"), r"^(\s)*(--)(\s)*$", s)
+    if documenter
+        Documenter.makedocs(root = outputdir)
+    else
+        cp(joinpath(outputdir, "src", "index.md"), joinpath(outputdir, "build", "index.md"), remove_destination=true)
+    end
+    _replace_line(joinpath(outputdir, "build", "index.md"), Regex("^($s)\$"), "--")
+    _replace_line(joinpath(outputdir, "build", "index.md"), r"^<a id=.*$", "")
+end
+
+
+function _create_index_html(outputdir; js = :local)
 
     d = (js == :local) ? depfiles : deps
 
-    Base.open(joinpath(slideshowdir, "index.html"), "w") do f
+    Base.open(joinpath(outputdir, "build", "index.html"), "w") do f
         template = Base.open(joinpath(_pkg_assets, "indextemplate.html"))
         for line in eachline(template, chomp=false)
             for (key, val) in zip(depkeys, d)
@@ -49,8 +75,21 @@ function openurl(url::AbstractString)
     end
 end
 
-function open(slideshowdir)
-    openurl(joinpath(slideshowdir, "index.html"))
+function open(outputdir)
+    openurl(joinpath(outputdir, "build", "index.html"))
 end
+
+function _replace_line(filename, a::Regex, b)
+    f = Base.open(filename)
+    (tmp, tmpstream) = mktemp()
+    for line in eachline(f, chomp = true)
+        write(tmpstream, ismatch(a, line) ? b : line)
+        write(tmpstream, '\n')
+    end
+    close(f)
+    close(tmpstream)
+    mv(tmp, filename, remove_destination = true)
+end
+
 
 end # module
