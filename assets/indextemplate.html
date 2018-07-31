@@ -4,9 +4,60 @@
     <title>Title</title>
     <meta charset="utf-8">
     <style>
-      @import "$font1";
-      @import "$font2";
-      @import "$font3";
+      /* Lora used for body */
+      @font-face{
+        font-family: 'Lora';
+        src: url('fonts/Lora/Lora-Regular.ttf');
+      }
+      @font-face{
+        font-family: 'Lora';
+        src: url('fonts/Lora/Lora-Bold.ttf');
+        font-weight: bold;
+      }
+      @font-face{
+        font-family: 'Lora';
+        src: url('fonts/Lora/Lora-Italic.ttf');
+        font-style: italic;
+      }
+      @font-face{
+        font-family: 'Lora';
+        src: url('fonts/Lora/Lora-BoldItalic.ttf');
+        font-weight: bold;
+        font-style: italic;
+      }
+
+      /* Yanone Kaffeesatz used for h1, h2, h3 */
+      @font-face{
+        font-family: 'Yanone Kaffeesatz';
+        src: url('fonts/Yanone_Kaffeesatz/YanoneKaffeesatz-Regular.ttf');
+      }
+      @font-face{
+        font-family: 'Yanone_Kaffeesatz';
+        src: url('fonts/Yanone_Kaffeesatz/YanoneKaffeesatz-Bold.ttf');
+        font-weight: bold;
+      }
+
+      /* Ubuntu Mono used for code, do we need Italic for code ? */
+      @font-face{
+        font-family: 'Ubuntu Mono';
+        src: url('fonts/Ubuntu_Mono/UbuntuMono-Regular.ttf');
+      }
+      @font-face{
+        font-family: 'Ubuntu Mono';
+        src: url('fonts/Ubuntu_Mono/UbuntuMono-Bold.ttf');
+        font-weight: bold;
+      }
+      @font-face{
+        font-family: 'Ubuntu Mono';
+        src: url('fonts/Ubuntu_Mono/UbuntuMono-Italic.ttf');
+        font-style: italic;
+      }
+      @font-face{
+        font-family: 'Ubuntu Mono';
+        src: url('fonts/Ubuntu_Mono/UbuntuMono-BoldItalic.ttf');
+        font-weight: bold;
+        font-style: italic;
+      }
 
       body { font-family: 'Droid Serif'; }
       h1, h2, h3 {
@@ -19,10 +70,10 @@
   </head>
   <body>
 
-    <script src="$remark" type="text/javascript"></script>
-    <script src="$katexjs"></script>
-    <script src="$auto-render"></script>
-    <link rel="stylesheet" href="$katexcss">
+    <script src="remark.min.js" type="text/javascript"></script>
+    <script src="katex.min.js"></script>
+    <script src="auto-render.min.js"></script>
+    <link rel="stylesheet" href="katex.min.css">
     <script type="text/javascript">
         var options = {};
         var renderMath = function() {

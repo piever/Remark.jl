@@ -8,41 +8,31 @@ export slideshow
 const _pkg_assets = joinpath(dirname(@__DIR__), "assets")
 
 const deps = [
-    "https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz",
-    "https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic",
-    "https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic",
     "http://gnab.github.io/remark/downloads/remark-latest.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/contrib/auto-render.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css"
 ]
 
-const depnames =  ["font1.css", "font2.css", "font3.css", "remark.min.js", "katex.min.js", "auto-render.min.js", "katex.min.css"]
+const depnames =  ["remark.min.js", "katex.min.js", "auto-render.min.js", "katex.min.css"]
 const depfiles = joinpath.(_pkg_assets, depnames)
-const libdepfiles = joinpath.("..", "lib", depnames)
 
-const depkeys = ["\$font1", "\$font2", "\$font3", "\$remark", "\$katexjs", "\$auto-render", "\$katexcss"]
-
-function slideshow(inputfile, outputdir; js = :local, documenter = true)
+function slideshow(inputfile, outputdir; documenter = true)
     inputfile = realpath(abspath(inputfile))
     outputdir = realpath(abspath(outputdir))
-    mkpath.(joinpath.(outputdir, ("src", "build", "lib")))
-    _create_index_md(inputfile, outputdir; js = js, documenter = documenter)
-    _create_index_html(outputdir; js = js)
+    mkpath.(joinpath.(outputdir, ("src", "build")))
+    _create_index_md(inputfile, outputdir; documenter = documenter)
+    _create_index_html(outputdir)
     return outputdir
 end
 
-function _create_index_md(inputfile, outputdir; js = :local, documenter = true)
+function _create_index_md(inputfile, outputdir; documenter = true)
     if ismatch(r".jl$", inputfile)
         Literate.markdown(inputfile, joinpath(outputdir, "src"), name = "index")
     else
         cp(inputfile, joinpath(outputdir, "src", "index.md"), remove_destination=true)
     end
-    if js == :lib
-        for (name, file) in zip(depnames, depfiles)
-            cp(file, joinpath(outputdir, "lib", name))
-        end
-    end
+
     srand(123)
     s = randstring(50)
     _replace_line(joinpath(outputdir, "src", "index.md"), r"^(\s)*(--)(\s)*$", s)
@@ -56,21 +46,21 @@ function _create_index_md(inputfile, outputdir; js = :local, documenter = true)
 end
 
 
-function _create_index_html(outputdir; js = :local)
-
-    d = (js == :local) ? depfiles :
-        (js == :lib) ? libdepfiles : deps
+function _create_index_html(outputdir)
 
     Base.open(joinpath(outputdir, "build", "index.html"), "w") do f
         template = Base.open(joinpath(_pkg_assets, "indextemplate.html"))
         for line in eachline(template, chomp=false)
-            for (key, val) in zip(depkeys, d)
-                line = replace(line, key, val)
-            end
             write(f, line)
         end
         close(template)
     end
+    for (name, file) in zip(depnames, depfiles)
+        dest = joinpath(outputdir, "build", name)
+        isfile(dest) || cp(file, dest)
+    end
+    dest = joinpath(outputdir, "build", "fonts")
+    isdir(dest) || cp(joinpath(_pkg_assets, "fonts"), dest)
 end
 
 function openurl(url::AbstractString)
