@@ -25,7 +25,7 @@ Remark.open(slideshowdir)
 
 ## Offline use
 
-The `slideshow` command creates a slideshow that uses local javascript libraries: the resulting presentation folder can be opened offline. To instead use the online javascript libraries use the option `js=:remote` to the `slideshow` function.
+The `slideshow` command creates a slideshow that uses local javascript libraries: the resulting presentation folder can be opened offline.
 
 ## Using from a Julia script
 
