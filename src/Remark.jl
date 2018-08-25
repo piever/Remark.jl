@@ -21,8 +21,9 @@ function slideshow(inputfile, outputdir = dirname(inputfile); documenter = true)
     inputfile = realpath(abspath(inputfile))
     outputdir = realpath(abspath(outputdir))
     mkpath.(joinpath.(outputdir, ("src", "build")))
-    _create_index_md(inputfile, outputdir; documenter = documenter)
-    _create_index_html(outputdir)
+    outputfile = _create_index_md(inputfile, outputdir; documenter = documenter)
+    s = read(outputfile, String)
+    _create_index_html(outputdir, s)
     return outputdir
 end
 
@@ -36,17 +37,19 @@ function _create_index_md(inputfile, outputdir; documenter = true)
     srand(123)
     s = randstring(50)
     _replace_line(joinpath(outputdir, "src", "index.md"), r"^(\s)*(--)(\s)*$", s)
+    outputfile = joinpath(outputdir, "build", "index.md")
     if documenter
         Documenter.makedocs(root = outputdir)
     else
-        cp(joinpath(outputdir, "src", "index.md"), joinpath(outputdir, "build", "index.md"), remove_destination=true)
+        cp(joinpath(outputdir, "src", "index.md"), outputfile, remove_destination=true)
     end
-    _replace_line(joinpath(outputdir, "build", "index.md"), Regex("^($s)\$"), "--")
-    _replace_line(joinpath(outputdir, "build", "index.md"), r"^<a id=.*$", "")
+    _replace_line(outputfile, Regex("^($s)\$"), "--")
+    _replace_line(outputfile, r"^<a id=.*$", "")
+    outputfile
 end
 
 
-function _create_index_html(outputdir)
+function _create_index_html(outputdir, s)
 
     Base.open(joinpath(outputdir, "build", "index.html"), "w") do f
         template = Base.open(joinpath(_pkg_assets, "indextemplate.html"))
@@ -61,6 +64,7 @@ function _create_index_html(outputdir)
     end
     dest = joinpath(outputdir, "build", "fonts")
     isdir(dest) || cp(joinpath(_pkg_assets, "fonts"), dest)
+    joinpath(outputdir, "build", "index.html")
 end
 
 function openurl(url::AbstractString)
