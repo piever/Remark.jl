@@ -91,7 +91,7 @@ function _replace_line(filename, a::Regex, b)
     end
     close(f)
     close(tmpstream)
-    mv(tmp, filename, force = true)
+    mv(tmp, filename, force=true)
 end
 
 
