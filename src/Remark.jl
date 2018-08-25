@@ -24,6 +24,7 @@ function slideshow(inputfile, outputdir = dirname(inputfile); documenter = true)
     outputfile = _create_index_md(inputfile, outputdir; documenter = documenter)
     s = read(outputfile, String)
     _create_index_html(outputdir, s)
+    rm(outputfile)
     return outputdir
 end
 
@@ -54,7 +55,7 @@ function _create_index_html(outputdir, s)
     Base.open(joinpath(outputdir, "build", "index.html"), "w") do f
         template = Base.open(joinpath(_pkg_assets, "indextemplate.html"))
         for line in eachline(template, chomp=false)
-            write(f, line)
+            ismatch(r"^(\s)*sfTiCgvZnilxkAh6ccwvfYSrKb4PmBKK", line) ? write(f, s) : write(f, line)
         end
         close(template)
     end
