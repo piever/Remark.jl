@@ -21,10 +21,9 @@ function slideshow(inputfile, outputdir = dirname(inputfile); documenter = true)
     inputfile = realpath(abspath(inputfile))
     outputdir = realpath(abspath(outputdir))
     mkpath.(joinpath.(outputdir, ("src", "build")))
-    outputfile = _create_index_md(inputfile, outputdir; documenter = documenter)
-    s = read(outputfile, String)
-    _create_index_html(outputdir, s)
-    rm(outputfile)
+    mk_file = _create_index_md(inputfile, outputdir; documenter = documenter)
+    _create_index_html(outputdir, mk_file)
+    rm(mk_file)
     return outputdir
 end
 
@@ -50,12 +49,12 @@ function _create_index_md(inputfile, outputdir; documenter = true)
 end
 
 
-function _create_index_html(outputdir, s)
+function _create_index_html(outputdir, md_file)
 
     Base.open(joinpath(outputdir, "build", "index.html"), "w") do f
         template = Base.open(joinpath(_pkg_assets, "indextemplate.html"))
         for line in eachline(template, chomp=false)
-            ismatch(r"^(\s)*sfTiCgvZnilxkAh6ccwvfYSrKb4PmBKK", line) ? write(f, s) : write(f, line)
+            ismatch(r"^(\s)*sfTiCgvZnilxkAh6ccwvfYSrKb4PmBKK", line) ? copytobuffer!(f, md_file) : write(f, line)
         end
         close(template)
     end
@@ -80,6 +79,12 @@ end
 
 function open(outputdir)
     openurl(joinpath(outputdir, "build", "index.html"))
+end
+
+function copytobuffer!(f, filename)
+    for line in eachline(filename, chomp=false)
+        write(f, line)
+    end
 end
 
 function _replace_line(filename, a::Regex, b)
