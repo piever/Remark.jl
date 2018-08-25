@@ -95,13 +95,13 @@ end
 function _replace_line(filename, a::Regex, b)
     f = Base.open(filename)
     (tmp, tmpstream) = mktemp()
-    for line in eachline(f, chomp = true)
+    for line in eachline(f, keep=false)
         write(tmpstream, occursin(a, line) ? b : line)
         write(tmpstream, '\n')
     end
     close(f)
     close(tmpstream)
-    mv(tmp, filename, remove_destination = true)
+    mv(tmp, filename, force = true)
 end
 
 
