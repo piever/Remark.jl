@@ -17,12 +17,16 @@ const deps = [
 const depnames =  ["remark.min.js", "katex.min.js", "auto-render.min.js", "katex.min.css"]
 const depfiles = joinpath.(_pkg_assets, depnames)
 
-function slideshow(inputfile, outputdir = dirname(inputfile); documenter = true)
+const styles_css = joinpath(_pkg_assets, "styles.css")
+
+function slideshow(inputfile, outputdir = dirname(inputfile); documenter = true, css = styles_css)
     inputfile = realpath(abspath(inputfile))
     outputdir = realpath(abspath(outputdir))
+    css = realpath(abspath(css))
     mkpath.(joinpath.(outputdir, ("src", "build")))
     mk_file = _create_index_md(inputfile, outputdir; documenter = documenter)
     _create_index_html(outputdir, mk_file)
+    cp(css, joinpath(outputdir, "build", "styles.css"))
     rm(mk_file)
     return outputdir
 end
