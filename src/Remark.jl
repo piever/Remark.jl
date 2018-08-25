@@ -17,7 +17,7 @@ const deps = [
 const depnames =  ["remark.min.js", "katex.min.js", "auto-render.min.js", "katex.min.css"]
 const depfiles = joinpath.(_pkg_assets, depnames)
 
-function slideshow(inputfile, outputdir; documenter = true)
+function slideshow(inputfile, outputdir = dirname(inputfile); documenter = true)
     inputfile = realpath(abspath(inputfile))
     outputdir = realpath(abspath(outputdir))
     mkpath.(joinpath.(outputdir, ("src", "build")))
