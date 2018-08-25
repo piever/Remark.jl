@@ -2,6 +2,7 @@ module Remark
 
 import Literate
 import Documenter
+import DefaultApplication
 using Random
 
 export slideshow
@@ -72,19 +73,8 @@ function _create_index_html(outputdir, md_file)
     joinpath(outputdir, "build", "index.html")
 end
 
-function openurl(url::AbstractString)
-    if is_apple()
-        run(`open $url`)
-    elseif is_windows()
-        run(`start $url`)
-    elseif is_unix()
-        run(`xdg-open $url`)
-    end
-end
-
-function open(outputdir)
-    openurl(joinpath(outputdir, "build", "index.html"))
-end
+open(outputdir) =
+    DefaultApplication.open(joinpath(outputdir, "build", "index.html"))
 
 function copytobuffer!(f, filename)
     for line in eachline(filename, keep=true)
