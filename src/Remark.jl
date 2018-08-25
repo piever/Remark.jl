@@ -2,6 +2,7 @@ module Remark
 
 import Literate
 import Documenter
+using Compat
 
 export slideshow
 
@@ -32,7 +33,7 @@ function slideshow(inputfile, outputdir = dirname(inputfile); documenter = true,
 end
 
 function _create_index_md(inputfile, outputdir; documenter = true)
-    if ismatch(r".jl$", inputfile)
+    if occursin(r".jl$", inputfile)
         Literate.markdown(inputfile, joinpath(outputdir, "src"), name = "index")
     else
         cp(inputfile, joinpath(outputdir, "src", "index.md"), remove_destination=true)
@@ -58,7 +59,7 @@ function _create_index_html(outputdir, md_file)
     Base.open(joinpath(outputdir, "build", "index.html"), "w") do f
         template = Base.open(joinpath(_pkg_assets, "indextemplate.html"))
         for line in eachline(template, chomp=false)
-            ismatch(r"^(\s)*sfTiCgvZnilxkAh6ccwvfYSrKb4PmBKK", line) ? copytobuffer!(f, md_file) : write(f, line)
+            occursin(r"^(\s)*sfTiCgvZnilxkAh6ccwvfYSrKb4PmBKK", line) ? copytobuffer!(f, md_file) : write(f, line)
         end
         close(template)
     end
@@ -95,7 +96,7 @@ function _replace_line(filename, a::Regex, b)
     f = Base.open(filename)
     (tmp, tmpstream) = mktemp()
     for line in eachline(f, chomp = true)
-        write(tmpstream, ismatch(a, line) ? b : line)
+        write(tmpstream, occursin(a, line) ? b : line)
         write(tmpstream, '\n')
     end
     close(f)
