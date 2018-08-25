@@ -2,7 +2,7 @@ module Remark
 
 import Literate
 import Documenter
-using Compat
+using Random
 
 export slideshow
 
@@ -36,17 +36,17 @@ function _create_index_md(inputfile, outputdir; documenter = true)
     if occursin(r".jl$", inputfile)
         Literate.markdown(inputfile, joinpath(outputdir, "src"), name = "index")
     else
-        cp(inputfile, joinpath(outputdir, "src", "index.md"), remove_destination=true)
+        cp(inputfile, joinpath(outputdir, "src", "index.md"), force=true)
     end
 
-    srand(123)
+    Random.seed!(123)
     s = randstring(50)
     _replace_line(joinpath(outputdir, "src", "index.md"), r"^(\s)*(--)(\s)*$", s)
     outputfile = joinpath(outputdir, "build", "index.md")
     if documenter
         Documenter.makedocs(root = outputdir)
     else
-        cp(joinpath(outputdir, "src", "index.md"), outputfile, remove_destination=true)
+        cp(joinpath(outputdir, "src", "index.md"), outputfile, force=true)
     end
     _replace_line(outputfile, Regex("^($s)\$"), "--")
     _replace_line(outputfile, r"^<a id=.*$", "")
@@ -58,7 +58,7 @@ function _create_index_html(outputdir, md_file)
 
     Base.open(joinpath(outputdir, "build", "index.html"), "w") do f
         template = Base.open(joinpath(_pkg_assets, "indextemplate.html"))
-        for line in eachline(template, chomp=false)
+        for line in eachline(template, keep=true)
             occursin(r"^(\s)*sfTiCgvZnilxkAh6ccwvfYSrKb4PmBKK", line) ? copytobuffer!(f, md_file) : write(f, line)
         end
         close(template)
@@ -87,7 +87,7 @@ function open(outputdir)
 end
 
 function copytobuffer!(f, filename)
-    for line in eachline(filename, chomp=false)
+    for line in eachline(filename, keep=true)
         write(f, line)
     end
 end
