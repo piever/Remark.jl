@@ -28,7 +28,7 @@ function slideshow(inputfile, outputdir = dirname(inputfile); documenter = true,
     mkpath.(joinpath.(outputdir, ("src", "build")))
     mk_file = _create_index_md(inputfile, outputdir; documenter = documenter)
     _create_index_html(outputdir, mk_file)
-    cp(css, joinpath(outputdir, "build", "styles.css"), remove_destination=true)
+    cp(css, joinpath(outputdir, "build", "styles.css"), force=true)
     rm(mk_file)
     return outputdir
 end
