@@ -9,9 +9,9 @@ const _pkg_assets = joinpath(dirname(@__DIR__), "assets")
 
 const deps = [
     "http://gnab.github.io/remark/downloads/remark-latest.min.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/contrib/auto-render.min.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css"
+    "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/contrib/auto-render.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css"
 ]
 
 const depnames =  ["remark.min.js", "katex.min.js", "auto-render.min.js", "katex.min.css"]
