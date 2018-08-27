@@ -2,6 +2,8 @@ module Remark
 
 import Literate
 import Documenter
+import DefaultApplication
+using Random
 
 export slideshow
 
@@ -26,26 +28,26 @@ function slideshow(inputfile, outputdir = dirname(inputfile); documenter = true,
     mkpath.(joinpath.(outputdir, ("src", "build")))
     mk_file = _create_index_md(inputfile, outputdir; documenter = documenter)
     _create_index_html(outputdir, mk_file)
-    cp(css, joinpath(outputdir, "build", "styles.css"), remove_destination=true)
+    cp(css, joinpath(outputdir, "build", "styles.css"), force=true)
     rm(mk_file)
     return outputdir
 end
 
 function _create_index_md(inputfile, outputdir; documenter = true)
-    if ismatch(r".jl$", inputfile)
+    if occursin(r".jl$", inputfile)
         Literate.markdown(inputfile, joinpath(outputdir, "src"), name = "index")
     else
-        cp(inputfile, joinpath(outputdir, "src", "index.md"), remove_destination=true)
+        cp(inputfile, joinpath(outputdir, "src", "index.md"), force=true)
     end
 
-    srand(123)
+    Random.seed!(123)
     s = randstring(50)
     _replace_line(joinpath(outputdir, "src", "index.md"), r"^(\s)*(--)(\s)*$", s)
     outputfile = joinpath(outputdir, "build", "index.md")
     if documenter
         Documenter.makedocs(root = outputdir)
     else
-        cp(joinpath(outputdir, "src", "index.md"), outputfile, remove_destination=true)
+        cp(joinpath(outputdir, "src", "index.md"), outputfile, force=true)
     end
     _replace_line(outputfile, Regex("^($s)\$"), "--")
     _replace_line(outputfile, r"^<a id=.*$", "")
@@ -57,8 +59,8 @@ function _create_index_html(outputdir, md_file)
 
     Base.open(joinpath(outputdir, "build", "index.html"), "w") do f
         template = Base.open(joinpath(_pkg_assets, "indextemplate.html"))
-        for line in eachline(template, chomp=false)
-            ismatch(r"^(\s)*sfTiCgvZnilxkAh6ccwvfYSrKb4PmBKK", line) ? copytobuffer!(f, md_file) : write(f, line)
+        for line in eachline(template, keep=true)
+            occursin(r"^(\s)*sfTiCgvZnilxkAh6ccwvfYSrKb4PmBKK", line) ? copytobuffer!(f, md_file) : write(f, line)
         end
         close(template)
     end
@@ -71,22 +73,11 @@ function _create_index_html(outputdir, md_file)
     joinpath(outputdir, "build", "index.html")
 end
 
-function openurl(url::AbstractString)
-    if is_apple()
-        run(`open $url`)
-    elseif is_windows()
-        run(`start $url`)
-    elseif is_unix()
-        run(`xdg-open $url`)
-    end
-end
-
-function open(outputdir)
-    openurl(joinpath(outputdir, "build", "index.html"))
-end
+open(outputdir) =
+    DefaultApplication.open(joinpath(outputdir, "build", "index.html"))
 
 function copytobuffer!(f, filename)
-    for line in eachline(filename, chomp=false)
+    for line in eachline(filename, keep=true)
         write(f, line)
     end
 end
@@ -94,13 +85,13 @@ end
 function _replace_line(filename, a::Regex, b)
     f = Base.open(filename)
     (tmp, tmpstream) = mktemp()
-    for line in eachline(f, chomp = true)
-        write(tmpstream, ismatch(a, line) ? b : line)
+    for line in eachline(f, keep=false)
+        write(tmpstream, occursin(a, line) ? b : line)
         write(tmpstream, '\n')
     end
     close(f)
     close(tmpstream)
-    mv(tmp, filename, remove_destination = true)
+    mv(tmp, filename, force=true)
 end
 
 
