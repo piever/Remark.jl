@@ -21,7 +21,7 @@ Here is a fraction: $$\frac{1}{2}$$
 # A plot
 
 ```@example index
-using Plots; gr()
+using Plots; pyplot()
 Plots.plot(rand(10))
 savefig("statplot.svg");
 ```

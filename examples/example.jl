@@ -11,7 +11,7 @@
 #
 # # Here's a way to add plots
 
-using Plots; gr()
+using Plots; pyplot()
 plot(rand(10))
 savefig("statplot.svg");
 
