@@ -1,7 +1,7 @@
 using Remark
 using Test
 
-demo = realpath(abspath(joinpath(@__DIR__, "..", "demo")))
+demo = joinpath(@__DIR__, "..", "demo")
 isdir(demo) && rm(demo, recursive = true)
 sleep(1)
 
@@ -14,16 +14,32 @@ sleep(1)
     @test all(isfile, Remark.depfiles)
 end
 
+isalnum(x) = isnumeric(x) || isletter(x)
+
 @testset "slideshow" begin
     slideshowdir = Remark.slideshow(joinpath(demo, "example.jl"))
-    @test slideshowdir == demo
+    @test slideshowdir == realpath(abspath(demo))
     @test all(isdir, joinpath.(slideshowdir, "build", "fonts", ["Lora", "Ubuntu_Mono", "Yanone_Kaffeesatz"]))
     for file in Remark.depfiles
         @test isfile(joinpath(slideshowdir, "build", splitdir(file)[2]))
     end
-    v1 = readlines(joinpath(@__DIR__, "index.html"))
-    v2 = readlines(joinpath(demo, "build", "index.html"))
-    @test all(v1 .== v2)
+    v1 = filter(isalnum, read(joinpath(@__DIR__, "indexjl.html"), String))
+    v2 = filter(isalnum, read(joinpath(demo, "build", "index.html"), String))
+    @test split(v1, "statplotsvg")[1] == split(v2, "statplotsvg")[1]
+    @test split(v1, "textarea")[3] == split(v2, "textarea")[3]
+end
+
+@testset "slideshowmd" begin
+    slideshowdir = Remark.slideshow(joinpath(demo, "example.md"))
+    @test slideshowdir == realpath(abspath(demo))
+    @test all(isdir, joinpath.(slideshowdir, "build", "fonts", ["Lora", "Ubuntu_Mono", "Yanone_Kaffeesatz"]))
+    for file in Remark.depfiles
+        @test isfile(joinpath(slideshowdir, "build", splitdir(file)[2]))
+    end
+    v1 = filter(isalnum, read(joinpath(@__DIR__, "indexmd.html"), String))
+    v2 = filter(isalnum, read(joinpath(demo, "build", "index.html"), String))
+    @test split(v1, "statplotsvg")[1] == split(v2, "statplotsvg")[1]
+    @test split(v1, "textarea")[3] == split(v2, "textarea")[3]
 end
 
 rm(demo, recursive = true)
