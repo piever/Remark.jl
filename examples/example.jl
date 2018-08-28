@@ -11,8 +11,8 @@
 #
 # # Here's a way to add plots
 
-using Plots; pyplot()
+using Plots; gr()
 plot(rand(10))
-savefig("statplot.png");
+savefig("statplot.svg");
 
-# ![](statplot.png)
+# ![](statplot.svg)
