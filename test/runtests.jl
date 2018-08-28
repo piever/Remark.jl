@@ -14,6 +14,8 @@ sleep(1)
     @test all(isfile, Remark.depfiles)
 end
 
+isalnum(x) = isnumeric(x) || isletter(x)
+
 @testset "slideshow" begin
     slideshowdir = Remark.slideshow(joinpath(demo, "example.jl"))
     @test slideshowdir == realpath(abspath(demo))
@@ -21,9 +23,9 @@ end
     for file in Remark.depfiles
         @test isfile(joinpath(slideshowdir, "build", splitdir(file)[2]))
     end
-    v1 = filter(!isempty, readlines(joinpath(@__DIR__, "indexjl.html")))
-    v2 = filter(!isempty, readlines(joinpath(demo, "build", "index.html")))
-    @test all(v1 .== v2)
+    v1 = filter(isalnum, read(joinpath(@__DIR__, "indexjl.html"), String))
+    v2 = filter(isalnum, read(joinpath(demo, "build", "index.html"), String))
+    @test v1 == v2
 end
 
 @testset "slideshowmd" begin
@@ -33,9 +35,9 @@ end
     for file in Remark.depfiles
         @test isfile(joinpath(slideshowdir, "build", splitdir(file)[2]))
     end
-    v1 = filter(!isempty, readlines(joinpath(@__DIR__, "indexmd.html")))
-    v2 = filter(!isempty, readlines(joinpath(demo, "build", "index.html")))
-    @test all(v1 .== v2)
+    v1 = filter(isalnum, read(joinpath(@__DIR__, "indexmd.html"), String))
+    v2 = filter(isalnum, read(joinpath(demo, "build", "index.html"), String))
+    @test v1 == v2
 end
 
 rm(demo, recursive = true)
