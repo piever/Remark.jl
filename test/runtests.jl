@@ -26,7 +26,7 @@ isalnum(x) = isnumeric(x) || isletter(x)
     v1 = filter(isalnum, read(joinpath(@__DIR__, "indexjl.html"), String))
     v2 = filter(isalnum, read(joinpath(demo, "build", "index.html"), String))
     @test split(v1, "statplotsvg")[1] == split(v2, "statplotsvg")[1]
-    @test split(v1, "textarea")[2] == split(v2, "textarea")[2]
+    @test split(v1, "textarea")[3] == split(v2, "textarea")[3]
 end
 
 @testset "slideshowmd" begin
@@ -39,7 +39,7 @@ end
     v1 = filter(isalnum, read(joinpath(@__DIR__, "indexmd.html"), String))
     v2 = filter(isalnum, read(joinpath(demo, "build", "index.html"), String))
     @test split(v1, "statplotsvg")[1] == split(v2, "statplotsvg")[1]
-    @test split(v1, "textarea")[2] == split(v2, "textarea")[2]
+    @test split(v1, "textarea")[3] == split(v2, "textarea")[3]
 end
 
 rm(demo, recursive = true)
