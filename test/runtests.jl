@@ -21,8 +21,8 @@ end
     for file in Remark.depfiles
         @test isfile(joinpath(slideshowdir, "build", splitdir(file)[2]))
     end
-    v1 = readlines(joinpath(@__DIR__, "index.html"))
-    v2 = readlines(joinpath(demo, "build", "index.html"))
+    v1 = filter(!isempty, readlines(joinpath(@__DIR__, "indexjl.html")))
+    v2 = filter(!isempty, readlines(joinpath(demo, "build", "index.html")))
     @test all(v1 .== v2)
 end
 
@@ -33,8 +33,8 @@ end
     for file in Remark.depfiles
         @test isfile(joinpath(slideshowdir, "build", splitdir(file)[2]))
     end
-    v1 = readlines(joinpath(@__DIR__, "indexmd.html"))
-    v2 = readlines(joinpath(demo, "build", "index.html"))
+    v1 = filter(!isempty, readlines(joinpath(@__DIR__, "indexmd.html")))
+    v2 = filter(!isempty, readlines(joinpath(demo, "build", "index.html")))
     @test all(v1 .== v2)
 end
 
