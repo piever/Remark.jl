@@ -1,5 +1,8 @@
 # Remark
 
+[![Build Status](https://travis-ci.org/piever/Remark.jl.svg?branch=master)](https://travis-ci.org/piever/Remark.jl)
+[![codecov.io](http://codecov.io/github/piever/Remark.jl/coverage.svg?branch=master)](http://codecov.io/github/piever/Remark.jl?branch=master)
+
 A simple Julia package to create presentations from markdown using [Remark](https://github.com/gnab/remark).
 
 ## Example use
