@@ -1,7 +1,7 @@
 module Remark
 
 import Literate
-import Documenter
+import Documenter, DocumenterMarkdown
 import DefaultApplication
 using Random
 
@@ -45,7 +45,7 @@ function _create_index_md(inputfile, outputdir; documenter = true)
     _replace_line(joinpath(outputdir, "src", "index.md"), r"^(\s)*(--)(\s)*$", s)
     outputfile = joinpath(outputdir, "build", "index.md")
     if documenter
-        Documenter.makedocs(root = outputdir)
+        Documenter.makedocs(format = :markdown, root = outputdir)
     else
         cp(joinpath(outputdir, "src", "index.md"), outputfile, force=true)
     end
