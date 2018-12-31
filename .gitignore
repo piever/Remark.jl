@@ -12,5 +12,6 @@ assets/remark.min.js
 assets/katex.min.js
 assets/katex.min.css
 assets/auto-render.min.js
+assets/tmp
 deps/build.log
 demo/*

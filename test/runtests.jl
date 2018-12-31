@@ -11,9 +11,10 @@ cp.(joinpath.(@__DIR__, "..", "examples", filenames), joinpath.(@__DIR__, "..", 
 sleep(1)
 
 @testset "deps" begin
-    @test all(isfile, Remark.depfiles)
+    for fn in ["remark.min.js", "katex.min.js", "katex.min.css", "auto-render.min.js"]
+        @test isfile(joinpath(@__DIR__, "..", "assets", fn))
+    end
 end
-
 
 const katexfonts = [
     "KaTeX_AMS-Regular",
@@ -39,7 +40,7 @@ const katexfonts = [
     "KaTeX_Typewriter-Regular",
 ]
 
-const exts =["woff", "woff2"]
+const exts =["ttf", "woff", "woff2"]
 
 @testset "katexfonts" begin
     for font in katexfonts
