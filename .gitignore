@@ -7,6 +7,7 @@ examples/src
 assets/font1.css
 assets/font2.css
 assets/font3.css
+assets/fonts/KaTeX*
 assets/remark.min.js
 assets/katex.min.js
 assets/katex.min.css
