@@ -14,3 +14,5 @@ depnames = joinpath.(_pkg_assets, ["remark.min.js", "katex.min.js", "auto-render
 for (dep, depname) in zip(deps, depnames)
     download(dep, depname)
 end
+
+include("katexfonts.jl")
