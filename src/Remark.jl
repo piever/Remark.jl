@@ -44,9 +44,18 @@ function _create_index_md(inputfile, outputdir; documenter = true)
     s2 = randstring('a':'z', 50)
     outputfile = joinpath(outputdir, "build", "index.md")
     if documenter
-        _replace_line(joinpath(outputdir, "src", "index.md"), r"^(\s)*(--)(\s)*$" => s1, r"^(\s)*(\$\$)(\s)*$" => s2)
+        _replace_line(
+            joinpath(outputdir, "src", "index.md"),
+            r"^(\s)*(--)(\s)*$" => s1,
+            r"^(\s)*(\$\$)(\s)*$" => s2,
+        )
         Documenter.makedocs(format = DocumenterMarkdown.Markdown(), root = outputdir)
-        _replace_line(outputfile, Regex("^($s1)\$") => "--", s2 => raw"$$", r"^<a id=.*$" => "")
+        _replace_line(
+            outputfile,
+            Regex("^($s1)\$") => "--",
+            s2 => raw"$$",
+            r"^<a id=.*$" => "",
+        )
     else
         cp(joinpath(outputdir, "src", "index.md"), outputfile, force=true)
     end
