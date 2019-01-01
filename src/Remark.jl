@@ -40,17 +40,19 @@ function _create_index_md(inputfile, outputdir; documenter = true)
         cp(inputfile, joinpath(outputdir, "src", "index.md"), force=true)
     end
 
-    Random.seed!(123)
-    s = randstring(50)
-    _replace_line(joinpath(outputdir, "src", "index.md"), r"^(\s)*(--)(\s)*$", s)
+    s1 = randstring('a':'z', 50)
+    s2 = randstring('a':'z', 50)
     outputfile = joinpath(outputdir, "build", "index.md")
     if documenter
+        _replace_line(joinpath(outputdir, "src", "index.md"), r"^(\s)*(--)(\s)*$", s1)
+        _replace_line(joinpath(outputdir, "src", "index.md"), r"^(\s)*(\$\$)(\s)*$", s2)
         Documenter.makedocs(format = DocumenterMarkdown.Markdown(), root = outputdir)
+        _replace_line(outputfile, Regex("^($s1)\$"), "--")
+        _replace_line(outputfile, s2, "\$\$")
+        _replace_line(outputfile, r"^<a id=.*$", "")
     else
         cp(joinpath(outputdir, "src", "index.md"), outputfile, force=true)
     end
-    _replace_line(outputfile, Regex("^($s)\$"), "--")
-    _replace_line(outputfile, r"^<a id=.*$", "")
     outputfile
 end
 
@@ -82,11 +84,11 @@ function copytobuffer!(f, filename)
     end
 end
 
-function _replace_line(filename, a::Regex, b)
+function _replace_line(filename, a, b)
     f = Base.open(filename)
     (tmp, tmpstream) = mktemp()
     for line in eachline(f, keep=false)
-        write(tmpstream, occursin(a, line) ? b : line)
+        write(tmpstream, replace(line, a => b))
         write(tmpstream, '\n')
     end
     close(f)
