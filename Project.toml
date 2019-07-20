@@ -1,0 +1,22 @@
+name = "Remark"
+uuid = "79b45036-8e38-5d04-8f49-b9fb23ff5a0d"
+authors = ["Pietro Vertechi <pietro.vertechi@neuro.fchampalimaud.org>"]
+version = "0.2.0"
+
+[deps]
+BinaryProvider = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
+DefaultApplication = "3f0dd361-4fe0-5fc6-8523-80b14ec94d85"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+DocumenterMarkdown = "997ab1e6-3595-5248-9280-8efb232c3433"
+Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
+
+[compat]
+Documenter = ">=0.20"
+julia = "0.7, 1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+
+[targets]
+test = ["Test", "Plots"]
