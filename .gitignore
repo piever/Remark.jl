@@ -15,3 +15,4 @@ assets/auto-render.min.js
 assets/tmp
 deps/build.log
 demo/*
+Manifest.toml
