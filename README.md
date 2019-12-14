@@ -13,7 +13,7 @@ To install type the following command in the Julia Pkg REPL
 (v1.0) pkg> add Remark
 ```
 
-Check [Remark documentation](https://github.com/gnab/remark/wiki/Markdown) on how to write the markdown for it to work with Remark. The most important thing is to use `---` to separate slides, a tiny example markdown file can be found [here](https://github.com/piever/Remark.jl/blob/master/examples/index.md).
+Check [Remark documentation](https://github.com/gnab/remark/wiki/Markdown) on how to write the markdown for it to work with Remark. The most important thing is to use `---` to separate slides, a tiny example markdown file can be found [here](https://github.com/piever/Remark.jl/blob/master/examples/example.md).
 
 ```julia
 import Remark
