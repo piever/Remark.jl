@@ -18,10 +18,12 @@ Check [Remark documentation](https://github.com/gnab/remark/wiki/Markdown) on ho
 ```julia
 import Remark
 
-# Add presentation (html+markdown) from the markdown file "example.md" in the folder "presentation/mybeautifulslides"
-slideshowdir = Remark.slideshow("example.md", "presentation/mybeautifulslides")
+# Generate a presentation (html+markdown) from the markdown file "example.md"
+# and save it in the folder "presentation/mybeautifulslides".
+slideshowdir = Remark.slideshow("example.md", "presentation/mybeautifulslides",
+                                options = Dict("ratio" => "16:9"))
 
-# Open presentation in default browser
+# Open presentation in default browser.
 Remark.open(slideshowdir)
 ```
 

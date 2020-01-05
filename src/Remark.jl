@@ -3,6 +3,7 @@ module Remark
 import Literate
 import Documenter, DocumenterMarkdown
 import DefaultApplication
+import JSON
 using Random
 
 export slideshow
@@ -21,13 +22,14 @@ const depfiles = joinpath.(_pkg_assets, depnames)
 
 const styles_css = joinpath(_pkg_assets, "styles.css")
 
-function slideshow(inputfile, outputdir = dirname(inputfile); documenter = true, css = styles_css)
+function slideshow(inputfile, outputdir = dirname(inputfile);
+                   documenter = true, css = styles_css, options = Dict())
     inputfile = realpath(abspath(inputfile))
     outputdir = realpath(abspath(outputdir))
     css = realpath(abspath(css))
     mkpath.(joinpath.(outputdir, ("src", "build")))
     mk_file = _create_index_md(inputfile, outputdir; documenter = documenter)
-    _create_index_html(outputdir, mk_file)
+    _create_index_html(outputdir, mk_file, options)
     cp(css, joinpath(outputdir, "build", "styles.css"), force=true)
     rm(mk_file)
     return outputdir
@@ -63,12 +65,19 @@ function _create_index_md(inputfile, outputdir; documenter = true)
 end
 
 
-function _create_index_html(outputdir, md_file)
+function _create_index_html(outputdir, md_file, options = Dict())
 
     Base.open(joinpath(outputdir, "build", "index.html"), "w") do f
         template = Base.open(joinpath(_pkg_assets, "indextemplate.html"))
         for line in eachline(template, keep=true)
-            occursin(r"^(\s)*sfTiCgvZnilxkAh6ccwvfYSrKb4PmBKK", line) ? copytobuffer!(f, md_file) : write(f, line)
+            if occursin(r"^(\s)*sfTiCgvZnilxkAh6ccwvfYSrKb4PmBKK", line)
+                copytobuffer!(f, md_file) 
+            elseif occursin(r"^(\s)*11JoqONykUJUYw2d2zoMrKzXIOIdQP83", line)
+                optionsjs = JSON.json(options)
+                write(f, "var options = $optionsjs;\n")
+            else
+                write(f, line)
+            end
         end
         close(template)
     end
