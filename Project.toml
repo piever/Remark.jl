@@ -1,7 +1,7 @@
 name = "Remark"
 uuid = "79b45036-8e38-5d04-8f49-b9fb23ff5a0d"
 authors = ["Pietro Vertechi <pietro.vertechi@neuro.fchampalimaud.org>"]
-version = "0.2.0"
+version = "0.2.1"
 
 [deps]
 BinaryProvider = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
@@ -13,7 +13,12 @@ Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [compat]
-Documenter = ">=0.20"
+BinaryProvider = "0.5"
+DefaultApplication = "1"
+Documenter = "0.20, 0.21, 0.22, 0.23, 0.24"
+DocumenterMarkdown = "0.2"
+JSON = "0.21"
+Literate = "2"
 julia = "0.7, 1"
 
 [extras]
