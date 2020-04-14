@@ -1,5 +1,7 @@
 using Remark
 using Test
+# set GR environment variables
+ENV["GKSwstype"] = "100"
 
 demo = joinpath(@__DIR__, "..", "demo")
 isdir(demo) && rm(demo, recursive = true)
