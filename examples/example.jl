@@ -13,6 +13,6 @@
 
 using Plots; gr()
 plot(rand(10))
-savefig("statplot.svg");
+savefig("statplot.svg"); # hide
 
 # ![](statplot.svg)
