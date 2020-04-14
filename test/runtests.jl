@@ -1,5 +1,9 @@
 using Remark
 using Test
+using Plots
+gr()
+# warm up to avoid warnings in presentation
+plot(rand(10), rand(10))
 
 demo = joinpath(@__DIR__, "..", "demo")
 isdir(demo) && rm(demo, recursive = true)
