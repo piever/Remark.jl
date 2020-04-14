@@ -11,8 +11,8 @@
 #
 # # Here's a way to add plots
 
-using Plots; gr()
-plot(rand(10))
-savefig("statplot.svg"); # hide
+using GR
+plot(rand(10), rand(10))
+savefig("myplot.svg"); # hide
 
-# ![](statplot.svg)
+# ![](myplot.svg)
