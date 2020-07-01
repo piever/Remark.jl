@@ -47,13 +47,13 @@ function _create_index_md(inputfile, outputdir; documenter = true)
     s2 = randstring('a':'z', 50)
     outputfile = joinpath(outputdir, "build", "index.md")
     if documenter
-        _replace_line(
+        replace_linewise(
             joinpath(outputdir, "src", "index.md"),
             r"^(\s)*(--)(\s)*$" => s1,
             r"^(\s)*(\$\$)(\s)*$" => s2,
         )
         Documenter.makedocs(format = DocumenterMarkdown.Markdown(), root = outputdir)
-        _replace_line(
+        replace_linewise(
             outputfile,
             Regex("^($s1)\$") => "--",
             s2 => raw"$$",
@@ -65,20 +65,18 @@ function _create_index_md(inputfile, outputdir; documenter = true)
     outputfile
 end
 
-
 function _create_index_html(outputdir, md_file, options = Dict(); title = "Title")
     
     optionsjs = JSON.json(options)
     template = joinpath(_pkg_assets, "indextemplate.html")
+    replacements = ["\$title" => title, "$\options" => optionsjs]
 
     Base.open(joinpath(outputdir, "build", "index.html"), "w") do io
         for line in eachline(template, keep=true)
             if occursin("\$presentation", line)
                 Base.open(md -> write(io, md), md_file)
             else
-                line = replace(line, "\$title" => title)
-                line = replace(line, "\$options" => optionsjs)
-                write(io, line)
+                write(io, foldl(replace, replacements, init=line))
             end
         end
     end
@@ -94,7 +92,7 @@ end
 open(outputdir) =
     DefaultApplication.open(joinpath(outputdir, "build", "index.html"))
 
-function _replace_line(filename, pairs...)
+function replace_linewise(filename, pairs...)
     f = Base.open(filename)
     (tmp, tmpstream) = mktemp()
     for line in eachline(f, keep=false)
@@ -106,6 +104,5 @@ function _replace_line(filename, pairs...)
     close(tmpstream)
     mv(tmp, filename, force=true)
 end
-
 
 end # module
