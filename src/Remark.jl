@@ -78,7 +78,8 @@ function _create_index_html(outputdir, md_file, options = Dict(); title = "Title
                 copytobuffer!(f, md_file) 
             elseif occursin(r"\$options", line)
                 optionsjs = JSON.json(options)
-                write(f, "var options = $optionsjs;\n")
+                option_line = replace(line, r"\$options" => optionsjs)
+                write(f, option_line)
             else
                 write(f, line)
             end
