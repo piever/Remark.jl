@@ -67,24 +67,20 @@ end
 
 
 function _create_index_html(outputdir, md_file, options = Dict(); title = "Title")
+    
+    optionsjs = JSON.json(options)
+    template = joinpath(_pkg_assets, "indextemplate.html")
 
-    Base.open(joinpath(outputdir, "build", "index.html"), "w") do f
-        template = Base.open(joinpath(_pkg_assets, "indextemplate.html"))
+    Base.open(joinpath(outputdir, "build", "index.html"), "w") do io
         for line in eachline(template, keep=true)
-            if occursin(r"\$title", line)
-                title_line = replace(line, r"\$title" => title)
-                write(f, title_line)
-            elseif occursin(r"\$presentation", line)
-                copytobuffer!(f, md_file) 
-            elseif occursin(r"\$options", line)
-                optionsjs = JSON.json(options)
-                option_line = replace(line, r"\$options" => optionsjs)
-                write(f, option_line)
+            if occursin("\$presentation", line)
+                Base.open(md -> write(io, md), md_file)
             else
-                write(f, line)
+                line = replace(line, "\$title" => title)
+                line = replace(line, "\$options" => optionsjs)
+                write(io, line)
             end
         end
-        close(template)
     end
     for (name, file) in zip(depnames, depfiles)
         dest = joinpath(outputdir, "build", name)
@@ -97,12 +93,6 @@ end
 
 open(outputdir) =
     DefaultApplication.open(joinpath(outputdir, "build", "index.html"))
-
-function copytobuffer!(f, filename)
-    for line in eachline(filename, keep=true)
-        write(f, line)
-    end
-end
 
 function _replace_line(filename, pairs...)
     f = Base.open(filename)
