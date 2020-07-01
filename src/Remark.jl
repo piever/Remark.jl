@@ -23,13 +23,14 @@ const depfiles = joinpath.(_pkg_assets, depnames)
 const styles_css = joinpath(_pkg_assets, "styles.css")
 
 function slideshow(inputfile, outputdir = dirname(inputfile);
-                   documenter = true, css = styles_css, options = Dict())
+    title = "Title", documenter = true, css = styles_css, options = Dict())
+
     inputfile = realpath(abspath(inputfile))
     outputdir = realpath(abspath(outputdir))
     css = realpath(abspath(css))
     mkpath.(joinpath.(outputdir, ("src", "build")))
     mk_file = _create_index_md(inputfile, outputdir; documenter = documenter)
-    _create_index_html(outputdir, mk_file, options)
+    _create_index_html(outputdir, mk_file, options; title = title)
     cp(css, joinpath(outputdir, "build", "styles.css"), force=true)
     rm(mk_file)
     return outputdir
@@ -65,16 +66,20 @@ function _create_index_md(inputfile, outputdir; documenter = true)
 end
 
 
-function _create_index_html(outputdir, md_file, options = Dict())
+function _create_index_html(outputdir, md_file, options = Dict(); title = "Title")
 
     Base.open(joinpath(outputdir, "build", "index.html"), "w") do f
         template = Base.open(joinpath(_pkg_assets, "indextemplate.html"))
         for line in eachline(template, keep=true)
-            if occursin(r"^(\s)*sfTiCgvZnilxkAh6ccwvfYSrKb4PmBKK", line)
+            if occursin(r"\$title", line)
+                title_line = replace(line, r"\$title" => title)
+                write(f, title_line)
+            elseif occursin(r"\$presentation", line)
                 copytobuffer!(f, md_file) 
-            elseif occursin(r"^(\s)*11JoqONykUJUYw2d2zoMrKzXIOIdQP83", line)
+            elseif occursin(r"\$options", line)
                 optionsjs = JSON.json(options)
-                write(f, "var options = $optionsjs;\n")
+                option_line = replace(line, r"\$options" => optionsjs)
+                write(f, option_line)
             else
                 write(f, line)
             end
