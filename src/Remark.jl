@@ -69,7 +69,7 @@ function _create_index_html(outputdir, md_file, options = Dict(); title = "Title
     
     optionsjs = JSON.json(options)
     template = joinpath(_pkg_assets, "indextemplate.html")
-    replacements = ["\$title" => title, "$\options" => optionsjs]
+    replacements = ["\$title" => title, "\$options" => optionsjs]
 
     Base.open(joinpath(outputdir, "build", "index.html"), "w") do io
         for line in eachline(template, keep=true)
