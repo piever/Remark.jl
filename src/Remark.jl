@@ -33,7 +33,10 @@ function slideshow(inputfile, outputdir = dirname(inputfile);
     # reload script afterwards, so stop working.
     # to solve this we move everything in place at the end as a single fast operation
     mktempdir() do tempdir
-        workingdir = realpath(abspath(mkpath(joinpath(tempdir, "working"))))
+        # cp is required if `outputdir` is not empty.
+        workingdir = realpath(abspath(cp(outputdir, joinpath(tempdir, "working"))))
+
+
         inputfile = realpath(abspath(inputfile))
         css = realpath(abspath(css))
         mkpath.(joinpath.(workingdir, ("src", "build")))
