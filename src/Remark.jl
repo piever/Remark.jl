@@ -44,7 +44,7 @@ function slideshow(inputfile, outputdir = dirname(inputfile);
 
         mv(workingdir, outputdir, force=true)
     end
-    return outputdir
+    return realpath(abspath(outputdir))
 end
 
 function _create_index_md(inputfile, outputdir; documenter = true)
@@ -82,7 +82,7 @@ function _create_index_html(outputdir, md_file, options = Dict(); title = "Title
     template = joinpath(_pkg_assets, "indextemplate.html")
     replacements = ["\$title" => title, "\$options" => optionsjs]
 
-    Base.open(joinpath(outputdir, "build", "index.html"), "a") do io
+    Base.open(joinpath(outputdir, "build", "index.html"), "w") do io
         for line in eachline(template, keep=true)
             if occursin("\$presentation", line)
                 Base.open(md -> write(io, md), md_file)
