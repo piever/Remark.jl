@@ -25,15 +25,29 @@ const styles_css = joinpath(_pkg_assets, "styles.css")
 function slideshow(inputfile, outputdir = dirname(inputfile);
     title = "Title", documenter = true, css = styles_css, options = Dict())
 
-    inputfile = realpath(abspath(inputfile))
-    outputdir = realpath(abspath(outputdir))
-    css = realpath(abspath(css))
-    mkpath.(joinpath.(outputdir, ("src", "build")))
-    mk_file = _create_index_md(inputfile, outputdir; documenter = documenter)
-    _create_index_html(outputdir, mk_file, options; title = title)
-    cp(css, joinpath(outputdir, "build", "styles.css"), force=true)
-    rm(mk_file)
-    return outputdir
+    # We do all the creation of files in a workingdir in a tempdir, then move them to
+    # output dir at the end. We do this because some operations e.g. Documenter will
+    # delete the old files before the new ones are created, leaving no file there for
+    # several seconds. This breaks auto-refresh web-dev tools as they reload and then
+    # can't find the file they are reloading, and not find the file means they have no
+    # reload script afterwards, so stop working.
+    # to solve this we move everything in place at the end as a single fast operation
+    mktempdir() do tempdir
+        # cp is required if `outputdir` is not empty.
+        workingdir = realpath(abspath(cp(outputdir, joinpath(tempdir, "working"))))
+
+
+        inputfile = realpath(abspath(inputfile))
+        css = realpath(abspath(css))
+        mkpath.(joinpath.(workingdir, ("src", "build")))
+        mk_file = _create_index_md(inputfile, workingdir; documenter = documenter)
+        _create_index_html(workingdir, mk_file, options; title = title)
+        cp(css, joinpath(workingdir, "build", "styles.css"), force=true)
+        rm(mk_file)
+
+        mv(workingdir, outputdir, force=true)
+    end
+    return realpath(abspath(outputdir))
 end
 
 function _create_index_md(inputfile, outputdir; documenter = true)
@@ -66,7 +80,7 @@ function _create_index_md(inputfile, outputdir; documenter = true)
 end
 
 function _create_index_html(outputdir, md_file, options = Dict(); title = "Title")
-    
+
     optionsjs = JSON.json(options)
     template = joinpath(_pkg_assets, "indextemplate.html")
     replacements = ["\$title" => title, "\$options" => optionsjs]
