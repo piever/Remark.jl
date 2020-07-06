@@ -22,8 +22,12 @@ const depfiles = joinpath.(_pkg_assets, depnames)
 
 const styles_css = joinpath(_pkg_assets, "styles.css")
 
-function slideshow(inputfile, outputdir = dirname(inputfile);
-    title = "Title", documenter = true, css = styles_css, options = Dict())
+function slideshow(inputfile, outputdir=dirname(inputfile);
+    title="Title", documenter=true, css=styles_css, options=Dict())
+
+    inputfile = realpath(abspath(inputfile))
+    css = realpath(abspath(css))
+    assets_dir = joinpath(dirname(inputfile), "assets")
 
     # We do all the creation of files in a workingdir in a tempdir, then move them to
     # output dir at the end. We do this because some operations e.g. Documenter will
@@ -32,27 +36,20 @@ function slideshow(inputfile, outputdir = dirname(inputfile);
     # can't find the file they are reloading, and not find the file means they have no
     # reload script afterwards, so stop working.
     # to solve this we move everything in place at the end as a single fast operation
-    mktempdir() do tempdir
-        # cp is required if `outputdir` is not empty.
-        workingdir = realpath(abspath(cp(outputdir, joinpath(tempdir, "working"))))
-
-
-        inputfile = realpath(abspath(inputfile))
-        css = realpath(abspath(css))
+    mktempdir() do workingdir
         mkpath.(joinpath.(workingdir, ("src", "build")))
-        mk_file = _create_index_md(inputfile, workingdir; documenter = documenter)
-        _create_index_html(workingdir, mk_file, options; title = title)
+        mk_file = _create_index_md(inputfile, workingdir; documenter=documenter)
+        _create_index_html(workingdir, mk_file, options; title=title)
         cp(css, joinpath(workingdir, "build", "styles.css"), force=true)
-        rm(mk_file)
-
-        mv(workingdir, outputdir, force=true)
+        isdir(assets_dir) && cp(assets_dir, joinpath(workingdir, "build", "assets"), force=true)
+        mv(joinpath(workingdir, "build"), joinpath(outputdir, "build"), force=true)
     end
     return realpath(abspath(outputdir))
 end
 
-function _create_index_md(inputfile, outputdir; documenter = true)
+function _create_index_md(inputfile, outputdir; documenter=true)
     if occursin(r".jl$", inputfile)
-        Literate.markdown(inputfile, joinpath(outputdir, "src"), name = "index")
+        Literate.markdown(inputfile, joinpath(outputdir, "src"), name="index")
     else
         cp(inputfile, joinpath(outputdir, "src", "index.md"), force=true)
     end
@@ -66,7 +63,7 @@ function _create_index_md(inputfile, outputdir; documenter = true)
             r"^(\s)*(--)(\s)*$" => s1,
             r"^(\s)*(\$\$)(\s)*$" => s2,
         )
-        Documenter.makedocs(format = DocumenterMarkdown.Markdown(), root = outputdir)
+        Documenter.makedocs(format=DocumenterMarkdown.Markdown(), root=outputdir)
         replace_linewise(
             outputfile,
             Regex("^($s1)\$") => "--",
@@ -79,7 +76,7 @@ function _create_index_md(inputfile, outputdir; documenter = true)
     outputfile
 end
 
-function _create_index_html(outputdir, md_file, options = Dict(); title = "Title")
+function _create_index_html(outputdir, md_file, options=Dict(); title="Title")
 
     optionsjs = JSON.json(options)
     template = joinpath(_pkg_assets, "indextemplate.html")
