@@ -68,7 +68,7 @@ end
 
 @testset "slideshowmd" begin
     md_demo = joinpath(demo, "markdown")
-    slideshowdir = Remark.slideshow(joinpath(md_demo, "example.md"))
+    slideshowdir = Remark.slideshow(md_demo)
     @test slideshowdir == realpath(abspath(md_demo))
     @test all(isdir, joinpath.(slideshowdir, "build", "fonts", ["Lora", "Ubuntu_Mono", "Yanone_Kaffeesatz"]))
     for file in Remark.depfiles

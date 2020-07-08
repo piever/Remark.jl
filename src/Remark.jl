@@ -25,6 +25,7 @@ const style_css = joinpath(_pkg_assets, "style.css")
 function slideshow(presentation_dir;
     title="Title", documenter=true, options=Dict())
 
+    @assert isdir(presentation_dir)
     presentation_dir = realpath(abspath(presentation_dir))
     indices = ["index.md", "index.jl"]
     indices_path = filter(ispath, joinpath.(presentation_dir, "src", indices))
@@ -32,9 +33,9 @@ function slideshow(presentation_dir;
     inputfile = indices_path[1]
     
     css_file = joinpath(presentation_dir, "style.css")
-    css_dir = joinpath(presentation_dir, "style.css")
+    css_dir = joinpath(presentation_dir, "style")
     css_list = isfile(css_file) ? [css_file] :
-               isdir(css_dir) ? joinpath.(css_dir, readdir(css_dir)) : [style_css]
+               isdir(css_dir) ? glob("*.css", css_dir) : [style_css]
 
     assets_dir = joinpath(dirname(inputfile), "assets")
 
@@ -49,7 +50,7 @@ function slideshow(presentation_dir;
         mkpath.(joinpath.(workingdir, ("src", "build")))
         mk_file = _create_index_md(inputfile, workingdir; documenter=documenter)
         _create_index_html(workingdir, mk_file, options; title=title)
-        open(joinpath(workingdir, "build", "style.css"), "w") do io
+        Base.open(joinpath(workingdir, "build", "style.css"), "w") do io
             foreach(file -> Base.open(content -> write(io, content), file), css_list)
         end
         isdir(assets_dir) && cp(assets_dir, joinpath(workingdir, "build", "assets"), force=true)
