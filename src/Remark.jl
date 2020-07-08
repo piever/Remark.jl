@@ -5,6 +5,7 @@ import Documenter, DocumenterMarkdown
 import DefaultApplication
 import JSON
 using Random
+using Glob: glob
 
 export slideshow
 
@@ -32,8 +33,8 @@ function slideshow(presentation_dir;
     length(indices_path) == 1 || error("Exactly one of index.md and index.jl must be present")
     inputfile = indices_path[1]
     
-    css_file = joinpath(presentation_dir, "style.css")
-    css_dir = joinpath(presentation_dir, "style")
+    css_file = joinpath(presentation_dir, "src", "style.css")
+    css_dir = joinpath(presentation_dir, "src", "style")
     css_list = isfile(css_file) ? [css_file] :
                isdir(css_dir) ? glob("*.css", css_dir) : [style_css]
 
