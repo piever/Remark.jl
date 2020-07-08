@@ -35,4 +35,4 @@ Remark.open(slideshowdir)
 
 - [Documenter](https://github.com/JuliaDocs/Documenter.jl) is run on the markdown by default: to keep the markdown as is, use `documenter=false`.
 
-- All features of Documenter are automatically available here, for example use `# hide` at the end of a line of code for it to not appear in the slideshow (useful for saving plots, see [example](https://github.com/piever/Remark.jl/blob/master/examples/example.md)).
+- All features of Documenter are automatically available here, for example use `# hide` at the end of a line of code for it to not appear in the slideshow (useful for saving plots, see [example](https://github.com/piever/Remark.jl/blob/master/examples/md_example/src/index.md)).

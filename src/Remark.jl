@@ -20,13 +20,22 @@ const deps = [
 const depnames =  ["remark.min.js", "katex.min.js", "auto-render.min.js", "katex.min.css"]
 const depfiles = joinpath.(_pkg_assets, depnames)
 
-const styles_css = joinpath(_pkg_assets, "styles.css")
+const style_css = joinpath(_pkg_assets, "style.css")
 
-function slideshow(inputfile, outputdir=dirname(inputfile);
-    title="Title", documenter=true, css=styles_css, options=Dict())
+function slideshow(presentation_dir;
+    title="Title", documenter=true, options=Dict())
 
-    inputfile = realpath(abspath(inputfile))
-    css = realpath(abspath(css))
+    presentation_dir = realpath(abspath(presentation_dir))
+    indices = ["index.md", "index.jl"]
+    indices_path = filter(ispath, joinpath.(presentation_dir, "src", indices))
+    length(indices_path) == 1 || error("Exactly one of index.md and index.jl must be present")
+    inputfile = indices_path[1]
+    
+    css_file = joinpath(presentation_dir, "style.css")
+    css_dir = joinpath(presentation_dir, "style.css")
+    css_list = isfile(css_file) ? [css_file] :
+               isdir(css_dir) ? joinpath.(css_dir, readdir(css_dir)) : [style_css]
+
     assets_dir = joinpath(dirname(inputfile), "assets")
 
     # We do all the creation of files in a workingdir in a tempdir, then move them to
@@ -40,11 +49,13 @@ function slideshow(inputfile, outputdir=dirname(inputfile);
         mkpath.(joinpath.(workingdir, ("src", "build")))
         mk_file = _create_index_md(inputfile, workingdir; documenter=documenter)
         _create_index_html(workingdir, mk_file, options; title=title)
-        cp(css, joinpath(workingdir, "build", "styles.css"), force=true)
+        open(joinpath(workingdir, "build", "style.css"), "w") do io
+            foreach(file -> Base.open(content -> write(io, content), file), css_list)
+        end
         isdir(assets_dir) && cp(assets_dir, joinpath(workingdir, "build", "assets"), force=true)
-        mv(joinpath(workingdir, "build"), joinpath(outputdir, "build"), force=true)
+        mv(joinpath(workingdir, "build"), joinpath(presentation_dir, "build"), force=true)
     end
-    return realpath(abspath(outputdir))
+    return presentation_dir
 end
 
 function _create_index_md(inputfile, outputdir; documenter=true)
