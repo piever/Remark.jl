@@ -42,10 +42,10 @@ To get started, simple do:
 import Remark
 
 # Generate a presentation (html+markdown) from the julia template
-# and save it in the folder "jl_presentation".
+# and save it in the folder "julia_presentation".
 julia_template = joinpath(dirname(dirname(pathof(Remark))), "examples", "julia")
-cp(julia_template, "jl_presentation")
-slideshowdir = Remark.slideshow("jl_presentation",
+cp(julia_template, "julia_presentation")
+slideshowdir = Remark.slideshow("julia_presentation",
                                 options = Dict("ratio" => "16:9"),
                                 title = "My beautiful slides")
 
