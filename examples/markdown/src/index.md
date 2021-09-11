@@ -32,4 +32,4 @@ plot(rand(10))
 savefig("myplot.svg"); # hide
 ```
 
-# ![](myplot.svg)
+![](myplot.svg)
