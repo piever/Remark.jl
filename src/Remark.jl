@@ -113,6 +113,42 @@ function _create_index_html(outputdir, md_file, options=Dict(); title="Title")
     joinpath(outputdir, "build", "index.html")
 end
 
+function transcribe(source, target)
+    for name in readdir(source)
+        sourcepath, targetpath = joinpath.((source, target), name)
+        if isdir(sourcepath)
+            mkdir(targetpath)
+            transcribe(sourcepath, targetpath)
+        else
+            write(targetpath, read(sourcepath))
+        end
+    end
+end
+
+"""
+    generate(dest; extension="md")
+
+Generate a directory named `dest`, and fill it with a presentation template.
+`extension` determines whether the index file will be a markdown file (`extension="md"`)
+or a julia file (`extension="jl"`).
+
+## Example
+
+Generate a julia template in a new folder `presentation`, inside the current working directory.
+
+```julia
+julia> Remark.generate("presentation", extension="jl")
+````
+"""
+function generate(dest; extension="md")
+    extension in ("md", "jl") || throw(ArgumentError("""
+    only `extension = "md"` or `extension = "jl"` are supported, found $extension
+    """))
+    folder = extension == "md" ? "markdown" : "julia"
+    transcribe(joinpath(dirname(@__DIR__), "examples", folder), mkdir(dest))
+    return realpath(abspath(dest))
+end
+
 open(outputdir) =
     DefaultApplication.open(joinpath(outputdir, "build", "index.html"))
 
