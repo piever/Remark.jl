@@ -54,7 +54,7 @@ function slideshow(presentation_dir;
         Base.open(joinpath(workingdir, "build", "style.css"), "w") do io
             foreach(file -> Base.open(content -> write(io, content), file), css_list)
         end
-        isdir(assets_dir) && cp(assets_dir, joinpath(workingdir, "build", "assets"), force=true)
+        isdir(assets_dir) && transcribe(assets_dir, mkdir(joinpath(workingdir, "build", "assets")))
         mv(joinpath(workingdir, "build"), joinpath(presentation_dir, "build"), force=true)
     end
     return presentation_dir
@@ -64,7 +64,7 @@ function _create_index_md(inputfile, outputdir; documenter=true)
     if occursin(r".jl$", inputfile)
         Literate.markdown(inputfile, joinpath(outputdir, "src"), name="index")
     else
-        cp(inputfile, joinpath(outputdir, "src", "index.md"), force=true)
+        transcribefile(inputfile, joinpath(outputdir, "src", "index.md"))
     end
 
     s1 = randstring('a':'z', 50)
@@ -84,7 +84,7 @@ function _create_index_md(inputfile, outputdir; documenter=true)
             r"^<a id=.*$" => "",
         )
     else
-        cp(joinpath(outputdir, "src", "index.md"), outputfile, force=true)
+        transcribefile(joinpath(outputdir, "src", "index.md"), outputfile)
     end
     outputfile
 end
@@ -106,24 +106,27 @@ function _create_index_html(outputdir, md_file, options=Dict(); title="Title")
     end
     for (name, file) in zip(depnames, depfiles)
         dest = joinpath(outputdir, "build", name)
-        isfile(dest) || cp(file, dest)
+        transcribefile(file, dest)
     end
     dest = joinpath(outputdir, "build", "fonts")
-    isdir(dest) || cp(joinpath(_pkg_assets, "fonts"), dest)
+    transcribe(joinpath(_pkg_assets, "fonts"), mkdir(dest))
     joinpath(outputdir, "build", "index.html")
 end
 
+# Copy content of directory `source` in existing directory `target`
 function transcribe(source, target)
     for name in readdir(source)
         sourcepath, targetpath = joinpath.((source, target), name)
         if isdir(sourcepath)
-            mkdir(targetpath)
+            mkpath(targetpath)
             transcribe(sourcepath, targetpath)
         else
-            write(targetpath, read(sourcepath))
+            transcribefile(sourcepath, targetpath)
         end
     end
 end
+
+transcribefile(source, target) = write(target, read(source))
 
 """
     generate(dest; extension="md")
