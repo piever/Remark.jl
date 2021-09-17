@@ -19,9 +19,8 @@ Check out the [Remark docs](https://github.com/gnab/remark/wiki/Markdown) on how
 import Remark
 
 # Generate a presentation (html+markdown) from the markdown template
-# and save it in the folder "presentation".
-markdown_template = joinpath(dirname(dirname(pathof(Remark))), "examples", "markdown")
-cp(markdown_template, "presentation")
+# and save it in the folder "presentation", which should not exist when this is called.
+Remark.generate("presentation")
 slideshowdir = Remark.slideshow("presentation",
                                 options = Dict("ratio" => "16:9"),
                                 title = "My beautiful slides")
