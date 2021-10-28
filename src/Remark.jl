@@ -54,7 +54,7 @@ function slideshow(presentation_dir;
         Base.open(joinpath(workingdir, "build", "style.css"), "w") do io
             foreach(file -> Base.open(content -> write(io, content), file), css_list)
         end
-        isdir(assets_dir) && transcribe(assets_dir, mkdir(joinpath(workingdir, "build", "assets")))
+        isdir(assets_dir) && transcribe(assets_dir, mkpath(joinpath(workingdir, "build", "assets")))
         mv(joinpath(workingdir, "build"), joinpath(presentation_dir, "build"), force=true)
     end
     return presentation_dir
