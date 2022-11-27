@@ -24,7 +24,7 @@ const depfiles = joinpath.(_pkg_assets, depnames)
 const style_css = joinpath(_pkg_assets, "style.css")
 
 function slideshow(presentation_dir;
-    title="Title", documenter=true, options=Dict())
+    title="Title", documenter=true, options=Dict(), kwargs...)
 
     @assert isdir(presentation_dir)
     presentation_dir = realpath(abspath(presentation_dir))
@@ -47,9 +47,11 @@ function slideshow(presentation_dir;
     # can't find the file they are reloading, and not find the file means they have no
     # reload script afterwards, so stop working.
     # to solve this we move everything in place at the end as a single fast operation
+    
+    literate_args = Dict{String,Any}(string(k) => v for (k, v) in kwargs)
     mktempdir() do workingdir
         mkpath.(joinpath.(workingdir, ("src", "build")))
-        mk_file = _create_index_md(inputfile, workingdir; documenter=documenter)
+        mk_file = _create_index_md(inputfile, workingdir; documenter=documenter, literate_args=literate_args)
         _create_index_html(workingdir, mk_file, options; title=title)
         Base.open(joinpath(workingdir, "build", "style.css"), "w") do io
             foreach(file -> Base.open(content -> write(io, content), file), css_list)
@@ -60,9 +62,9 @@ function slideshow(presentation_dir;
     return presentation_dir
 end
 
-function _create_index_md(inputfile, outputdir; documenter=true)
+function _create_index_md(inputfile, outputdir; documenter=true, literate_args::AbstractDict=Dict())
     if occursin(r".jl$", inputfile)
-        Literate.markdown(inputfile, joinpath(outputdir, "src"), name="index")
+        Literate.markdown(inputfile, joinpath(outputdir, "src"), name="index", config=literate_args)
     else
         transcribefile(inputfile, joinpath(outputdir, "src", "index.md"))
     end
