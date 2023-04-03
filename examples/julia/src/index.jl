@@ -13,6 +13,7 @@
 
 using Plots
 plot(rand(10))
-savefig("myplot.svg"); # hide
+savefig("myplot.svg") # hide
+nothing # hide
 
 # ![](myplot.svg)

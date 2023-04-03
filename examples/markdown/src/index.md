@@ -29,7 +29,8 @@ $$\sum_{n=0}^\infty \alpha^n = \frac{1}{1-\alpha}$$
 ```@example index
 using Plots
 plot(rand(10))
-savefig("myplot.svg"); # hide
+savefig("myplot.svg") # hide
+nothing # hide
 ```
 
 ![](myplot.svg)
