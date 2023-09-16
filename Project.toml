@@ -18,7 +18,7 @@ Tar = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
 [compat]
 CodecZlib = "0.7"
 DefaultApplication = "1"
-Documenter = "0.20, 0.21, 0.22, 0.23, 0.24, 0.25, 0.26"
+Documenter = "0.20, 0.21, 0.22, 0.23, 0.24, 0.25, 0.26, 1"
 DocumenterMarkdown = "0.2"
 Glob = "1"
 JSON = "0.21"
